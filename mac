@@ -27,11 +27,6 @@ if [[ ":$PATH:" != *":$HOME/.bin:"* ]]; then
 fi
 ### end common-components/check-home-bin
 
-fancy_echo() {
-  printf "\n%b\n" "$1"
-}
-### end common-components/shared-functions
-
 brew_install_or_upgrade() {
   if brew list -1 | grep -Fqx "$1"; then
     (brew upgrade "$@") || true
@@ -73,9 +68,9 @@ fancy_echo "Starting Postgres ..."
 fancy_echo "Installing rbenv, to change Ruby versions ..."
   brew_install_or_upgrade 'rbenv'
 
-  if ! grep -qs "rbenv init" ~/.zshrc; then
-    printf 'export PATH="$HOME/.rbenv/bin:$PATH"\n' >> ~/.zshrc
-    printf 'eval "$(rbenv init - --no-rehash)"\n' >> ~/.zshrc
+  if ! grep -qs "rbenv init" ~/.bashrc; then
+    printf 'export PATH="$HOME/.rbenv/bin:$PATH"\n' >> ~/.bashrc
+    printf 'eval "$(rbenv init - --no-rehash)"\n' >> ~/.bashrc
 
     fancy_echo "Enable shims and autocompletion ..."
       eval "$(rbenv init -)"
@@ -89,11 +84,6 @@ fancy_echo "Installing rbenv-gem-rehash so the shell automatically picks up bina
 fancy_echo "Installing ruby-build, to install Rubies ..."
   brew_install_or_upgrade 'ruby-build'
 ### end mac-components/rbenv
-
-fancy_echo "Upgrading and linking OpenSSL ..."
-  brew_install_or_upgrade 'openssl'
-  brew link openssl --force
-### end mac-components/compiler-and-libraries
 
 ruby_version="$(curl -sSL http://ruby.thoughtbot.com/latest)"
 
@@ -115,10 +105,6 @@ fancy_echo "Configuring Bundler for faster, parallel gem installation ..."
   number_of_cores=$(sysctl -n hw.ncpu)
   bundle config --global jobs $((number_of_cores - 1))
 ### end mac-components/bundler
-
-fancy_echo "Installing Suspenders, thoughtbot's Rails template ..."
-  gem install suspenders --no-document
-### end common-components/default-gems
 
 fancy_echo "Installing Heroku CLI client ..."
   brew_install_or_upgrade 'heroku-toolbelt'
