@@ -37,13 +37,7 @@ Install
 
 Read, then run the script:
 
-    bash <(curl -s https://raw.githubusercontent.com/thoughtbot/laptop/master/mac)
-
-### Linux
-
-Read, then run the script:
-
-    bash <(wget -qO- https://raw.githubusercontent.com/thoughtbot/laptop/master/linux)
+    bash <(curl -s https://raw.githubusercontent.com/perchco/laptop/master/mac)
 
 What it sets up
 ---------------
