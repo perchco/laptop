@@ -17,12 +17,12 @@ if [[ ! -d "$HOME/.bin/" ]]; then
   mkdir "$HOME/.bin"
 fi
 
-if [ ! -f "$HOME/.zshrc" ]; then
-  touch $HOME/.zshrc
+if [ ! -f "$HOME/.bashrc" ]; then
+  touch $HOME/.bashrc
 fi
 
 if [[ ":$PATH:" != *":$HOME/.bin:"* ]]; then
-  printf 'export PATH="$HOME/.bin:$PATH"\n' >> ~/.zshrc
+  printf 'export PATH="$HOME/.bin:$PATH"\n' >> ~/.bashrc
   export PATH="$HOME/.bin:$PATH"
 fi
 ### end common-components/check-home-bin
@@ -31,10 +31,6 @@ fancy_echo() {
   printf "\n%b\n" "$1"
 }
 ### end common-components/shared-functions
-
-fancy_echo "Changing your shell to zsh ..."
-  chsh -s $(which zsh)
-### end common-components/zsh
 
 brew_install_or_upgrade() {
   if brew list -1 | grep -Fqx "$1"; then
@@ -45,20 +41,14 @@ brew_install_or_upgrade() {
 }
 ### end mac-components/mac-functions
 
-if [[ -f /etc/zshenv ]]; then
-  fancy_echo "Fixing OSX zsh environment bug ..."
-    sudo mv /etc/{zshenv,zshrc}
-fi
-### end mac-components/zsh-fix
-
 if ! command -v brew &>/dev/null; then
   fancy_echo "Installing Homebrew, a good OS X package manager ..."
     ruby <(curl -fsS https://raw.githubusercontent.com/Homebrew/homebrew/go/install)
 
-  if ! grep -qs "recommended by brew doctor" ~/.zshrc; then
+  if ! grep -qs "recommended by brew doctor" ~/.bashrc; then
     fancy_echo "Put Homebrew location earlier in PATH ..."
-      printf '\n# recommended by brew doctor\n' >> ~/.zshrc
-      printf 'export PATH="/usr/local/bin:$PATH"\n' >> ~/.zshrc
+      printf '\n# recommended by brew doctor\n' >> ~/.bashrc
+      printf 'export PATH="/usr/local/bin:$PATH"\n' >> ~/.bashrc
       export PATH="/usr/local/bin:$PATH"
   fi
 else
@@ -74,46 +64,6 @@ fancy_echo "Installing Postgres, a good open source relational database ..."
 
 fancy_echo "Installing Redis, a good key-value database ..."
   brew_install_or_upgrade 'redis'
-
-fancy_echo "Installing The Silver Searcher (better than ack or grep) to search the contents of files ..."
-  brew_install_or_upgrade 'the_silver_searcher'
-
-fancy_echo "Installing vim from Homebrew to get the latest version ..."
-  brew_install_or_upgrade 'vim'
-
-fancy_echo "Installing ctags, to index files for vim tab completion of methods, classes, variables ..."
-  brew_install_or_upgrade 'ctags'
-
-fancy_echo "Installing tmux, to save project state and switch between projects ..."
-  brew_install_or_upgrade 'tmux'
-
-fancy_echo "Installing reattach-to-user-namespace, for copy-paste and RubyMotion compatibility with tmux ..."
-  brew_install_or_upgrade 'reattach-to-user-namespace'
-
-fancy_echo "Installing ImageMagick, to crop and resize images ..."
-  brew_install_or_upgrade 'imagemagick'
-
-fancy_echo "Installing QT, used by Capybara Webkit for headless Javascript integration testing ..."
-  brew_install_or_upgrade 'qt'
-
-fancy_echo "Installing watch, to execute a program periodically and show the output ..."
-  brew_install_or_upgrade 'watch'
-
-node_version="0.10.28"
-
-fancy_echo "Installing NVM, Node.js, and NPM, for running apps and installing JavaScript packages ..."
-  brew_install_or_upgrade 'nvm'
-
-  if ! grep -qs 'source $(brew --prefix nvm)/nvm.sh' ~/.zshrc; then
-    printf 'export PATH="$PATH:/usr/local/lib/node_modules"\n' >> ~/.zshrc
-    printf 'source $(brew --prefix nvm)/nvm.sh\n' >> ~/.zshrc
-  fi
-
-  source ~/.zshrc
-  nvm install "$node_version"
-
-  fancy_echo "Setting $node_version as the global default nodejs..."
-  nvm alias default "$node_version"
 ### end mac-components/packages
 
 fancy_echo "Starting Postgres ..."
@@ -176,23 +126,4 @@ fancy_echo "Installing Heroku CLI client ..."
 fancy_echo "Installing the heroku-config plugin to pull config variables locally to be used as ENV variables ..."
   heroku plugins:install git://github.com/ddollar/heroku-config.git
 ### end mac-components/heroku
-
-fancy_echo "Installing GitHub CLI client ..."
-  brew_install_or_upgrade 'hub'
-### end mac-components/github
-
-if ! command -v rcup &>/dev/null; then
-  fancy_echo "Installing rcm, to manage your dotfiles ..."
-    brew tap thoughtbot/formulae
-    brew_install_or_upgrade 'rcm'
-else
-  fancy_echo "rcm already installed. Skipping ..."
-fi
-### end mac-components/rcm
-
-fancy_echo "Installing your personal additions from ~/.laptop.local ..."
-  if [[ -f ~/.laptop.local ]]; then
-    source ~/.laptop.local
-  fi
-### end common-components/personal-additions
 
